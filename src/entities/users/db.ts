@@ -19,6 +19,9 @@ export class User extends BaseEntity {
     accessToken: string;
 
     @Column()
+    energy: number;
+
+    @Column()
     createdAt: Date = new Date();
 
     @Column()
@@ -60,6 +63,7 @@ export async function postCreateUser(): Promise<any> {
             "username": "dapa",
             'address': "123abc-defgh",
             "accessToken": "accesstoken-123",
+            "energy": 10,
             "createdAt": new Date(),
             "updatedAt": new Date(),
         }];
@@ -70,6 +74,7 @@ export async function postCreateUser(): Promise<any> {
             userData.username = datas.username;
             userData.address = datas.address;
             userData.accessToken = datas.accessToken;
+            userData.energy = datas.energy;
             userData.createdAt = datas.createdAt;
             userData.updatedAt = datas.updatedAt;
             await User.save(userData);

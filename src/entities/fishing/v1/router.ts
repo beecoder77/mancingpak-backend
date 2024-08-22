@@ -5,6 +5,7 @@ import {
 } from '../v1/db';
 import { wrapperError, wrapperSuccess } from '../../../wrapper';
 import { getUser } from '../../users/db';
+import { pushToCollection } from '../../collection/v1/db';
 
 export function getRouter(): Router {
     const router = express.Router();
@@ -27,8 +28,15 @@ export function getRouter(): Router {
             // Fish data from database
             const fishData: any = await getFishing();
 
-            // Optionally, you can pass the header value to your getRandomFish function if needed
+            // get random fish by fishData
             const caughtFish = await getRandomFish(fishData);
+
+            // Save to collection
+            const collection = await pushToCollection(caughtFish, addressId)
+            console.log('MA BROO MASUK GAK? ', collection)
+            if(collection?.err) {
+                return wrapperError(res, null, 'Failed to insert collection', 400)
+            }
 
             const remappedFish = {
                 title: caughtFish?.title,
@@ -42,6 +50,8 @@ export function getRouter(): Router {
             };
 
             const { dropRate, ...fishWithoutDropRate } = remappedFish;
+
+            
             return wrapperSuccess(res, fishWithoutDropRate, 'Successfully catches fish');
         }
     );
