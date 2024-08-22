@@ -39,7 +39,8 @@ export type PostFishing = Pick<Fishing, 'title' | 'imgUrl' | 'height' | 'rarity'
 
 export async function getFishing(): Promise<Fishing[]> {
     let fish = await Fishing.find();
-    if (!fish) {
+    console.log(fish);
+    if (!fish || !fish.length) {
         await createFish();
         fish = await Fishing.find();
     }
@@ -72,7 +73,8 @@ export async function getRandomFish(fishData: Fish[]): Promise<Fish> {
         // const caughtFish3 = await getFishing();
         // console.log(caughtFish3, 'AHAHAHAHAHAH')
         const totalDropRate = fishData.reduce((sum, fish) => sum + fish.dropRate, 0);
-        const randomValue = Math.random() * totalDropRate;
+        const mathRandom = Math.random();
+        const randomValue = mathRandom * totalDropRate;
 
         let cumulativeDropRate = 0;
         for (const fish of fishData) {
@@ -84,7 +86,6 @@ export async function getRandomFish(fishData: Fish[]): Promise<Fish> {
 
         return fishData[fishData.length - 1];
     } catch (err: any) {
-        console.error(err, 'HEHEHEHEEH');
         return {
             title: '',
             imgUrl: '',
@@ -172,7 +173,18 @@ export async function createFish(): Promise<any> {
                 "dropRate": 25
             }
         ];
-        await Fishing.save(fishData);
+        for (const datas of fishData) {
+            const fishData = new Fishing;
+            fishData.title = datas.title;
+            fishData.imgUrl = datas.imgUrl;
+            fishData.dropRate = datas.dropRate;
+            fishData.height = datas.attributes.height;
+            fishData.rarity = datas.attributes.rarity;
+            fishData.price = datas.attributes.price
+            await Fishing.save(fishData);
+        }
+        const saveData = await Fishing.save(fishData);
+        console.log(saveData);
         return {
             err: false,
             message: 'User created successfully!',

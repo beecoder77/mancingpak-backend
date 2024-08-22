@@ -17,7 +17,6 @@ export function getRouter(): Router {
         ) => {
             // Fish data from database
             const fishing = await getFishing();
-            console.log(fishing, 'AHAHAHAHAHHAHAHHAHAHAHAHAHAHAH')
             const fishData = [
                 {
                     "title": "Bawal Monster",
