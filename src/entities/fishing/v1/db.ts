@@ -3,11 +3,9 @@ import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 type Fish = {
     title: string;
     imgUrl: string;
-    attributes: {
-        height: number;
-        rarity: string;
-        price: number;
-    };
+    height: number;
+    rarity: string;
+    price: number;
     dropRate: number;
 };
 
@@ -39,7 +37,6 @@ export type PostFishing = Pick<Fishing, 'title' | 'imgUrl' | 'height' | 'rarity'
 
 export async function getFishing(): Promise<Fishing[]> {
     let fish = await Fishing.find();
-    console.log(fish);
     if (!fish || !fish.length) {
         await createFish();
         fish = await Fishing.find();
@@ -47,31 +44,8 @@ export async function getFishing(): Promise<Fishing[]> {
     return fish;
 }
 
-export async function createFishing(fishingCreate: PostFishing): Promise<Fishing> {
-    let post = new Fishing();
-
-    post.title = fishingCreate.title;
-    post.imgUrl = fishingCreate.imgUrl;
-    post.height = fishingCreate.height;
-    post.rarity = fishingCreate.rarity;
-    post.price = fishingCreate.price;
-    post.dropRate = fishingCreate.dropRate;
-
-    // const user = await getFishing();
-
-    // if (user === null) {
-    //     throw new Error(``);
-    // }
-
-    // post.user = user;
-
-    return await post.save();
-}
-
 export async function getRandomFish(fishData: Fish[]): Promise<Fish> {
     try {
-        // const caughtFish3 = await getFishing();
-        // console.log(caughtFish3, 'AHAHAHAHAHAH')
         const totalDropRate = fishData.reduce((sum, fish) => sum + fish.dropRate, 0);
         const mathRandom = Math.random();
         const randomValue = mathRandom * totalDropRate;
@@ -89,11 +63,9 @@ export async function getRandomFish(fishData: Fish[]): Promise<Fish> {
         return {
             title: '',
             imgUrl: '',
-            attributes: {
-                height: 0,
-                rarity: '',
-                price: 0,
-            },
+            height: 0,
+            rarity: '',
+            price: 0,
             dropRate: 0,
         }
     }
@@ -187,7 +159,7 @@ export async function createFish(): Promise<any> {
         console.log(saveData);
         return {
             err: false,
-            message: 'User created successfully!',
+            message: 'Fishing created successfully!',
             data: fishData
         }
     } catch (err) {

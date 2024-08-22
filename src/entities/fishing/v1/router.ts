@@ -16,83 +16,19 @@ export function getRouter(): Router {
             res
         ) => {
             // Fish data from database
-            const fishing = await getFishing();
-            const fishData = [
-                {
-                    "title": "Bawal Monster",
-                    "imgUrl": "https://storage.googleapis.com/mancingpak/nft/bawal_monster_mytical.png",
-                    "attributes": {
-                        "height": 100,
-                        "rarity": "MYTICAL",
-                        "price": 1000
-                    },
-                    "dropRate": 3
-                },
-                {
-                    "title": "Dragon Fish",
-                    "imgUrl": "https://storage.googleapis.com/mancingpak/nft/dragon_fish_legend.png",
-                    "attributes": {
-                        "height": 200,
-                        "rarity": "LEGEND",
-                        "price": 300
-                    },
-                    "dropRate": 5
-                },
-                {
-                    "title": "Tuna Blue Fish",
-                    "imgUrl": "https://storage.googleapis.com/mancingpak/nft/tuna_blue_epic.png",
-                    "attributes": {
-                        "height": 500,
-                        "rarity": "EPIC",
-                        "price": 150
-                    },
-                    "dropRate": 7
-                },
-                {
-                    "title": "Java Barb",
-                    "imgUrl": "https://storage.googleapis.com/mancingpak/nft/java_barb_rare.png",
-                    "attributes": {
-                        "height": 22,
-                        "rarity": "RARE",
-                        "price": 100
-                    },
-                    "dropRate": 11
-                },
-                {
-                    "title": "Salmon",
-                    "imgUrl": "https://storage.googleapis.com/mancingpak/nft/salmon_uncommon.png",
-                    "attributes": {
-                        "height": 24,
-                        "rarity": "UNCOMMON",
-                        "price": 20
-                    },
-                    "dropRate": 15
-                },
-                {
-                    "title": "Gold Fish Mini",
-                    "imgUrl": "https://storage.googleapis.com/mancingpak/nft/gold_fish_mini_common.png",
-                    "attributes": {
-                        "height": 15,
-                        "rarity": "COMMON",
-                        "price": 5
-                    },
-                    "dropRate": 20
-                },
-                {
-                    "title": "Java Barb Mini",
-                    "imgUrl": "https://storage.googleapis.com/mancingpak/nft/java_barb_mini_common.png",
-                    "attributes": {
-                        "height": 12,
-                        "rarity": "COMMON",
-                        "price": 5
-                    },
-                    "dropRate": 25
-                }
-            ];
-            
-
+            const fishData:any = await getFishing();
             const caughtFish = await getRandomFish(fishData);
-            const { dropRate, ...fishWithoutDropRate } = caughtFish;
+            const remappedFish = {
+                title: caughtFish?.title,
+                imgUrl: caughtFish?.imgUrl,
+                attributes: {
+                    height: caughtFish?.height,
+                    rarity: caughtFish?.rarity,
+                    price: caughtFish?.price,
+                },
+                dropRate: 25
+            }
+            const { dropRate, ...fishWithoutDropRate } = remappedFish;
             return wrapperSuccess(res, fishWithoutDropRate, 'Successfully catches fish');
         }
     );
