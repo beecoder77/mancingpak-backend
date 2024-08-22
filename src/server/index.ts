@@ -1,6 +1,5 @@
 import express from 'express';
 
-import { getRouter as getRouterPosts } from '../entities/posts/router';
 import { getRouter as getRouterUsers } from '../entities/users/router';
 import { getRouter as getRouterFishing } from '../entities/fishing/v1/router';
 
@@ -11,17 +10,8 @@ export function initServer() {
 
     app.use(express.json());
 
-    app.use('/users', getRouterUsers());
-    app.use('/posts', getRouterPosts());
     app.use('/fishing', getRouterFishing())
-
-    app.get('/init-called', (_req, res) => {
-        res.json(globalThis._azleInitCalled);
-    });
-
-    app.get('/post-upgrade-called', (_req, res) => {
-        res.json(globalThis._azlePostUpgradeCalled);
-    });
+    app.use('/auth/v1', getRouterUsers());
 
     return app.listen();
 }

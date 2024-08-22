@@ -14,7 +14,7 @@ export function getRouter(): Router {
     const router = express.Router();
 
     router.get(
-        '/',
+        '/listUser',
         async (
             req: Request<any, any, any, { limit?: string; offset?: string }>,
             res
@@ -24,7 +24,23 @@ export function getRouter(): Router {
 
             const users = await getUsers(limit, offset);
 
-            res.json(users);
+            if (!users) {
+                return res.status(404).json(
+                    {
+                        err: true,
+                        message: 'user not found!',
+                        data: []
+                    }
+                )
+            }
+
+            res.json(
+                {
+                    err: false,
+                    message: 'success get list user',
+                    data: users
+                }
+            );
         }
     );
 
@@ -32,72 +48,127 @@ export function getRouter(): Router {
         res.json(await countUsers());
     });
 
-    router.get('/:id', async (req, res) => {
-        const { id } = req.params;
+    router.get('/detailUser', async (req: Request, res) => {
+        const id = req.headers.authorization ?  req.headers.authorization.replace('Bearer ', '') : '';
+        if (!id) {
+            return res.status(500).json(
+                {
+                    err: true,
+                    message: 'id authorizations not found!',
+                    data: {}
+                }
+            )
+        } 
 
-        const user = await getUser(Number(id));
+        const user = await getUser(`${id}`);
 
-        res.json(user);
+        if (user) {
+            res.json({
+                err: false,
+                message: `Success get detail user`,
+                data: user
+            });
+        } else {
+            res.status(404).json(
+                {
+                    err: true,
+                    message: `user with id ${id} not found!`,
+                    data: {
+                        id: id
+                    }
+                }
+            )
+        }
     });
 
     router.post(
-        '/',
+        '/register',
         async (
-            req: Request<any, any, { username: string; age: number }>,
+            req: Request<any, any, { 
+                username: string; 
+                address: string;
+            }>,
             res
         ) => {
-            const { username, age } = req.body;
+            const { username, address } = req.body;
 
-            const user = await createUser({
-                username,
-                age
-            });
-
-            res.json(user);
+            try {
+                if (!username || !address) {
+                    res.status(500).json(
+                        {
+                            err: true,
+                            message: 'Username and address required!'
+                        }
+                    )
+                }
+                const user = await createUser({
+                    username,
+                    address,
+                });
+    
+                res.json({
+                    err: user.err,
+                    message: user.message,
+                    data: user.data
+                });
+            } catch (err) {
+                console.log(err);
+                res.status(500).json(
+                    {
+                        err: true,
+                        message: err,
+                        data: {}
+                    }
+                )
+            }
+            
         }
     );
 
-    router.post('/batch/:num', async (req, res) => {
-        const num = Number(req.params.num);
-
-        for (let i = 0; i < Number(req.params.num); i++) {
-            await createUser({
-                username: `lastmjs${v4()}`,
-                age: i
-            });
-        }
-
-        res.json({
-            Success: `${num} users created`
-        });
-    });
-
     router.put('/', updateHandler);
 
-    router.patch('/', updateHandler);
-
-    router.delete('/', async (req: Request<any, any, { id: number }>, res) => {
-        const { id } = req.body;
-
-        const deletedId = await deleteUser(id);
-
-        res.json(deletedId);
+    router.delete('/deleteUser', async (req: Request<any, any, { id: number }>, res) => {
+        const id = req.headers.authorization;
+        
+        if (!id) {
+            res.status(500).json(
+                {
+                    err: true,
+                    message: 'Id required!'
+                }
+            )
+        } else {
+            const deletedId = await deleteUser(id);
+    
+            res.json(deletedId);
+        }
     });
 
     return router;
 }
 
 async function updateHandler(
-    req: Request<any, any, { id: number; username?: string; age?: number }>,
+    req: Request<any, any, { id: string; username?: string; accessToken?: string; address?: string }>,
     res: Response
 ): Promise<void> {
-    const { id, username, age } = req.body;
+    const { id, username, address, accessToken } = req.body;
 
-    const user = await updateUser({
-        id,
-        username,
-        age
-    });
-
-    res.json(user);
+    if (!id) {
+        res.status(500).json(
+            {
+                err: true,
+                message: 'Id required!'
+            }
+        )
+    } else {
+        const user = await updateUser({
+            id,
+            username: username ? username : '',
+            address: address ? address : '',
+            accessToken: accessToken ?  accessToken : ''
+        });
+    
+        res.json(user);
+    }
+    
 }
