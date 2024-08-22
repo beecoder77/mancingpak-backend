@@ -36,12 +36,58 @@ export async function getUsers(limit: number, offset: number): Promise<User[]> {
     });
 }
 
-export async function getUser(id: string): Promise<User | null> {
-    return await User.findOne({
+export async function getUser(address: string): Promise<User | null> {
+    let user:any = await User.findOne({
         where: {
-            id: id
+            address: address
         }
     });
+    if (!user) {
+        const testur = await postCreateUser();
+        user = await User.findOne({
+            where: {
+                address: address
+            }
+        });
+    }
+    return user;
+}
+
+export async function postCreateUser(): Promise<any> {
+    try {
+        const users:any = [{
+            "id": '1a',
+            "username": "dapa",
+            'address': "123abc-defgh",
+            "accessToken": "accesstoken-123",
+            "createdAt": new Date(),
+            "updatedAt": new Date(),
+        }];
+
+        for (const datas of users) {
+            const userData = new User;
+            userData.id = datas.id,
+            userData.username = datas.username;
+            userData.address = datas.address;
+            userData.accessToken = datas.accessToken;
+            userData.createdAt = datas.createdAt;
+            userData.updatedAt = datas.updatedAt;
+            await User.save(userData);
+        }
+        const saveData = await User.save(users);
+        console.log(saveData);
+        return {
+            err: false,
+            message: 'User created successfully!',
+            data: users
+        }
+    } catch (err) {
+        return {
+            err: true,
+            message: err
+        }
+    }
+    
 }
 
 export async function countUsers(): Promise<number> {
