@@ -6,12 +6,14 @@ export const migration0 = `
         age INTEGER NOT NULL
     );
 
-    CREATE TABLE posts
+    CREATE TABLE fishing
     (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
         title TEXT NOT NULL,
-        body TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        imgUrl TEXT NOT NULL,
+        height INTEGER NOT NULL,
+        rarity TEXT NOT NULL,
+        price INTEGER NOT NULL,
+        dropRate INTEGER NOT NULL
     );
 `;

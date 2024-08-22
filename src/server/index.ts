@@ -2,6 +2,7 @@ import express from 'express';
 
 import { getRouter as getRouterPosts } from '../entities/posts/router';
 import { getRouter as getRouterUsers } from '../entities/users/router';
+import { getRouter as getRouterFishing } from '../entities/fishing/v1/router';
 
 // TODO make this function's return type explicit https://github.com/demergent-labs/azle/issues/1860
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -12,6 +13,7 @@ export function initServer() {
 
     app.use('/users', getRouterUsers());
     app.use('/posts', getRouterPosts());
+    app.use('/fishing', getRouterFishing())
 
     app.get('/init-called', (_req, res) => {
         res.json(globalThis._azleInitCalled);
