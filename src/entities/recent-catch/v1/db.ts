@@ -1,9 +1,16 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 @Entity()
-export class Collection extends BaseEntity {
+export class RecentCatch extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column()
+    recentId: string;
+
+    @Column()
+    fishId: number;
 
     @Column()
     title: string;
@@ -30,10 +37,10 @@ export class Collection extends BaseEntity {
     updatedAt: Date = new Date();
 }
 
-export type PostCollection = Pick<Collection, 'title' | 'imgUrl' | 'height' | 'rarity' | 'price' | 'userAddress' | 'createdAt' | 'updatedAt'> & { fishId: Collection['id'] };
+export type PostRecentCatch = Pick<RecentCatch, 'recentId' | 'fishId' | 'title' | 'imgUrl' | 'height' | 'rarity' | 'price' | 'userAddress' | 'createdAt' | 'updatedAt'> & { ids: RecentCatch['id'] };
 
-export async function getCollectionByUserAddress(address: string): Promise<Collection[]> {
-    return await Collection.find({
+export async function getRecentCatchByUserAddress(address: string): Promise<RecentCatch[]> {
+    return await RecentCatch.find({
         where: {
             userAddress: address
         }
@@ -42,8 +49,9 @@ export async function getCollectionByUserAddress(address: string): Promise<Colle
 
 export async function pushToRecentCatch(fish: any, addressId: any): Promise<any> {
     try {
-        const fishData = new Collection;
-        fishData.id = fish.id;
+        const fishData = new RecentCatch;
+        fishData.recentId = uuidv4();
+        fishData.fishId = fish.id;
         fishData.title = fish.title;
         fishData.imgUrl = fish.imgUrl;
         fishData.height = fish.height;
@@ -52,10 +60,10 @@ export async function pushToRecentCatch(fish: any, addressId: any): Promise<any>
         fishData.userAddress = addressId;
         fishData.createdAt = new Date();
         fishData.updatedAt = new Date();
-        await Collection.save(fishData);
+        await RecentCatch.save(fishData);
         return {
             err: false,
-            message: 'Collection created successfully!',
+            message: 'RecentCatch created successfully!',
             data: fishData
         }
     } catch (err) {

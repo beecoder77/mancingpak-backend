@@ -5,7 +5,7 @@ import {
 } from '../v1/db';
 import { wrapperError, wrapperSuccess } from '../../../wrapper';
 import { getUser } from '../../users/db';
-import { pushToCollection } from '../../collection/v1/db';
+import { pushToRecentCatch } from '../../recent-catch/v1/db';
 
 export function getRouter(): Router {
     const router = express.Router();
@@ -32,8 +32,7 @@ export function getRouter(): Router {
             const caughtFish = await getRandomFish(fishData);
 
             // Save to collection
-            const collection = await pushToCollection(caughtFish, addressId)
-            console.log('MA BROO MASUK GAK? ', collection)
+            const collection = await pushToRecentCatch(caughtFish, addressId)
             if(collection?.err) {
                 return wrapperError(res, null, 'Failed to insert collection', 400)
             }
