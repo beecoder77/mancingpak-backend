@@ -1,6 +1,7 @@
 import express, { Request, Router } from 'express';
 
 import {
+    getFishing,
     getRandomFish
 } from '../v1/db';
 import { wrapperSuccess } from '../../../wrapper';
@@ -15,6 +16,8 @@ export function getRouter(): Router {
             res
         ) => {
             // Fish data from database
+            const fishing = await getFishing();
+            console.log(fishing, 'AHAHAHAHAHHAHAHHAHAHAHAHAHAHAH')
             const fishData = [
                 {
                     "title": "Bawal Monster",
@@ -87,6 +90,8 @@ export function getRouter(): Router {
                     "dropRate": 25
                 }
             ];
+            
+
             const caughtFish = await getRandomFish(fishData);
             const { dropRate, ...fishWithoutDropRate } = caughtFish;
             return wrapperSuccess(res, fishWithoutDropRate, 'Successfully catches fish');

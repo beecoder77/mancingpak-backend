@@ -11,6 +11,7 @@ type Fish = {
     dropRate: number;
 };
 
+@Entity()
 export class Fishing extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -34,36 +35,42 @@ export class Fishing extends BaseEntity {
     dropRate: number;
 }
 
-// export type PostFishing = Pick<Fishing, 'title' | 'imgUrl' | 'height' | 'rarity' | 'price' | 'dropRate'> & { fishId: Fishing['id'] };
+export type PostFishing = Pick<Fishing, 'title' | 'imgUrl' | 'height' | 'rarity' | 'price' | 'dropRate'> & { fishId: Fishing['id'] };
 
 export async function getFishing(): Promise<Fishing[]> {
-    return await Fishing.find({});
+    let fish = await Fishing.find();
+    if (!fish) {
+        await createFish();
+        fish = await Fishing.find();
+    }
+    return fish;
 }
 
-// export async function createPost(postCreate: PostCreate): Promise<Fishing> {
-//     let post = new Fishing();
+export async function createFishing(fishingCreate: PostFishing): Promise<Fishing> {
+    let post = new Fishing();
 
-//     post.title = postCreate.title;
-//     post.imgUrl = postCreate.imgUrl;
-//     post.height = postCreate.height;
-//     post.rarity = postCreate.rarity;
-//     post.price = postCreate.price;
-//     post.dropRate = postCreate.dropRate;
+    post.title = fishingCreate.title;
+    post.imgUrl = fishingCreate.imgUrl;
+    post.height = fishingCreate.height;
+    post.rarity = fishingCreate.rarity;
+    post.price = fishingCreate.price;
+    post.dropRate = fishingCreate.dropRate;
 
-//     const user = await getUser(postCreate.user_id);
+    // const user = await getFishing();
 
-//     if (user === null) {
-//         throw new Error(``);
-//     }
+    // if (user === null) {
+    //     throw new Error(``);
+    // }
 
-//     post.user = user;
+    // post.user = user;
 
-//     return await post.save();
-// }
+    return await post.save();
+}
 
 export async function getRandomFish(fishData: Fish[]): Promise<Fish> {
     try {
         // const caughtFish3 = await getFishing();
+        // console.log(caughtFish3, 'AHAHAHAHAHAH')
         const totalDropRate = fishData.reduce((sum, fish) => sum + fish.dropRate, 0);
         const randomValue = Math.random() * totalDropRate;
 
@@ -77,7 +84,7 @@ export async function getRandomFish(fishData: Fish[]): Promise<Fish> {
 
         return fishData[fishData.length - 1];
     } catch (err: any) {
-        console.error(err.stack);
+        console.error(err, 'HEHEHEHEEH');
         return {
             title: '',
             imgUrl: '',
@@ -89,4 +96,93 @@ export async function getRandomFish(fishData: Fish[]): Promise<Fish> {
             dropRate: 0,
         }
     }
+}
+
+export async function createFish(): Promise<any> {
+    try {
+        const fishData = [
+            {
+                "title": "Bawal Monster",
+                "imgUrl": "https://storage.googleapis.com/mancingpak/nft/bawal_monster_mytical.png",
+                "attributes": {
+                    "height": 100,
+                    "rarity": "MYTICAL",
+                    "price": 1000
+                },
+                "dropRate": 3
+            },
+            {
+                "title": "Dragon Fish",
+                "imgUrl": "https://storage.googleapis.com/mancingpak/nft/dragon_fish_legend.png",
+                "attributes": {
+                    "height": 200,
+                    "rarity": "LEGEND",
+                    "price": 300
+                },
+                "dropRate": 5
+            },
+            {
+                "title": "Tuna Blue Fish",
+                "imgUrl": "https://storage.googleapis.com/mancingpak/nft/tuna_blue_epic.png",
+                "attributes": {
+                    "height": 500,
+                    "rarity": "EPIC",
+                    "price": 150
+                },
+                "dropRate": 7
+            },
+            {
+                "title": "Java Barb",
+                "imgUrl": "https://storage.googleapis.com/mancingpak/nft/java_barb_rare.png",
+                "attributes": {
+                    "height": 22,
+                    "rarity": "RARE",
+                    "price": 100
+                },
+                "dropRate": 11
+            },
+            {
+                "title": "Salmon",
+                "imgUrl": "https://storage.googleapis.com/mancingpak/nft/salmon_uncommon.png",
+                "attributes": {
+                    "height": 24,
+                    "rarity": "UNCOMMON",
+                    "price": 20
+                },
+                "dropRate": 15
+            },
+            {
+                "title": "Gold Fish Mini",
+                "imgUrl": "https://storage.googleapis.com/mancingpak/nft/gold_fish_mini_common.png",
+                "attributes": {
+                    "height": 15,
+                    "rarity": "COMMON",
+                    "price": 5
+                },
+                "dropRate": 20
+            },
+            {
+                "title": "Java Barb Mini",
+                "imgUrl": "https://storage.googleapis.com/mancingpak/nft/java_barb_mini_common.png",
+                "attributes": {
+                    "height": 12,
+                    "rarity": "COMMON",
+                    "price": 5
+                },
+                "dropRate": 25
+            }
+        ];
+        await Fishing.save(fishData);
+        return {
+            err: false,
+            message: 'User created successfully!',
+            data: fishData
+        }
+    } catch (err) {
+        return {
+            err: true,
+            message: err
+        }
+    }
+    
 }
