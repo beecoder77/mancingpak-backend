@@ -145,7 +145,7 @@ export function getRouter(): Router {
         }
     });
 
-    router.post('/', async (req: Request, res) => {
+    router.post('/login', async (req: Request, res) => {
         const address = req.headers.authorization ?  req.headers.authorization.replace('Bearer ', '') : '';
         console.log(address);
         if (!address) {
@@ -164,7 +164,10 @@ export function getRouter(): Router {
             res.json({
                 err: false,
                 message: `Success get detail user`,
-                data: user
+                data: {
+                    id: user.id,
+                    address: user.address
+                }
             });
         } else {
             res.status(404).json(
