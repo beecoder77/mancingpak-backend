@@ -27,6 +27,7 @@ import Types "./types";
 //img
 //https://ipfs.io/ipfs/QmawUgZuygn698ZsYqTh7wEjk8vUh1Gg8UTAxHSjNNPkUR?filename=fish_nationi.svg
 //mqhyd-tiutl-tuljg-w6wyz-gsc3e-hhhtp-l2bw3-anos5-ulpvs-dhltg-tqe
+//nnzid-ins2x-cdgtv-dyebh-sdkig-rtm64-kynir-nfevw-qg4vd-xpo6l-uae
 shared(msg) actor class NFToken(
     _logo: Text,
     _name: Text, 
@@ -274,9 +275,10 @@ shared(msg) actor class NFToken(
     public shared(msg) func mint(to: Principal, metadata: ?TokenMetadata): async MintResult {
         Debug.print("Owner: " # Principal.toText(owner_));
         Debug.print("Caller: " # Principal.toText(msg.caller));
-        if(msg.caller != owner_) {
-            return #Err(#Unauthorized);
-        };
+        //coment for testing
+        // if(msg.caller != owner_) {
+        //     return #Err(#Unauthorized);
+        // };
         let token: TokenInfo = {
             index = totalSupply_;
             var owner = to;

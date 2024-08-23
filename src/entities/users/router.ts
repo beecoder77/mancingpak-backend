@@ -145,6 +145,42 @@ export function getRouter(): Router {
         }
     });
 
+    router.post('/login', async (req: Request, res) => {
+        const address = req.body.address;
+        if (!address) {
+            return res.status(500).json(
+                {
+                    err: true,
+                    message: 'address authorizations not found!',
+                    data: {}
+                }
+            )
+        } 
+
+        const user = await getUser(`${address}`);
+
+        if (user) {
+            res.json({
+                err: false,
+                message: `Success get detail user`,
+                data: {
+                    id: user.id,
+                    address: user.address
+                }
+            });
+        } else {
+            res.status(404).json(
+                {
+                    err: true,
+                    message: `user with address ${address} not found!`,
+                    data: {
+                        id: address
+                    }
+                }
+            )
+        }
+    })
+
     return router;
 }
 
