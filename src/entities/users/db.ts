@@ -19,7 +19,10 @@ export class User extends BaseEntity {
     accessToken: string;
 
     @Column()
-    energy: number;
+    level: number = 2;
+
+    @Column()
+    energy: number = 50;
 
     @Column()
     createdAt: Date = new Date();
@@ -30,7 +33,7 @@ export class User extends BaseEntity {
 
 export type UserCreate = Pick<User, 'username' | 'address'>;
 export type UserCreateGoogle = Pick<User, 'accessToken'>;
-export type UserUpdate = Pick<User, 'id' | 'address' | 'username' | 'accessToken'>;
+export type UserUpdate = Pick<User, 'id' | 'address' | 'username' | 'accessToken' | 'level' | 'energy'>;
 
 export async function getUsers(limit: number, offset: number): Promise<User[]> {
     return await User.find({
@@ -40,18 +43,28 @@ export async function getUsers(limit: number, offset: number): Promise<User[]> {
 }
 
 export async function getUser(address: string): Promise<User | null> {
-    let user:any = await User.findOne({
+    let user = await User.findOne({
         where: {
             address: address
         }
     });
     if (!user) {
-        const testur = await postCreateUser();
-        user = await User.findOne({
-            where: {
-                address: address
-            }
-        });
+        await postCreateUser();
+        // const findNewUser = await User.findOne({
+        //     where: {
+        //         address: address
+        //     }
+        // });
+        // return findNewUser;
+        return null;
+        
+    }
+    //default for testing hackathon
+    if (!user.level) {
+        user.level = 2;
+    }
+    if (!user.energy) {
+        user.energy = 100;
     }
     return user;
 }
@@ -64,6 +77,7 @@ export async function postCreateUser(): Promise<any> {
             'address': "123abc-defgh",
             "accessToken": "accesstoken-123",
             "energy": 10,
+            "level": 1,
             "createdAt": new Date(),
             "updatedAt": new Date(),
         }];
@@ -139,6 +153,8 @@ export async function createUser(userCreate: UserCreate): Promise<{err: boolean,
         
         user.username = userCreate.username;
         user.address = userCreate.address ? userCreate.address : '';
+        user.level = 2;
+        user.energy = 100;
         user.createdAt = new Date();
         user.updatedAt = new Date();
 
@@ -164,6 +180,8 @@ export async function createUser(userCreate: UserCreate): Promise<{err: boolean,
                 id: userSave.id,
                 username: userSave.username,
                 address: userSave.address,
+                level: userSave.level,
+                energy: userSave.energy,
                 createdAt: userSave.createdAt,
                 updatedAt: userSave.updatedAt
             }
@@ -213,6 +231,8 @@ export async function updateUser(userUpdate: UserUpdate): Promise<User> {
     await User.update(userUpdate.id, {
         username: userUpdate.username ? userUpdate.username : user.username ? user.username : '',
         address: userUpdate.address ? userUpdate.address : user.address ? user.address : '',
+        level: userUpdate.level ? userUpdate.level : user.level ? user.level : 0,
+        energy: userUpdate.energy ? userUpdate.energy : user.energy ? user.energy : 0,
         accessToken: userUpdate.accessToken ? userUpdate.accessToken : user.accessToken ? user.accessToken : '',
         createdAt: user.createdAt,
         updatedAt: new Date()
