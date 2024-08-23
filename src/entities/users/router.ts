@@ -129,7 +129,7 @@ export function getRouter(): Router {
     router.put('/', updateHandler);
 
     router.delete('/deleteUser', async (req: Request<any, any, { id: number }>, res) => {
-        const id = req.headers.authorization;
+        const id = req.headers.authorization ? req.headers.authorization.replace('Bearer ', '') : '';
         
         if (!id) {
             res.status(500).json(
@@ -146,7 +146,7 @@ export function getRouter(): Router {
     });
 
     router.post('/login', async (req: Request, res) => {
-        const address = req.body.address;
+        const {address, username} = req.body;
         if (!address) {
             return res.status(500).json(
                 {
@@ -169,6 +169,16 @@ export function getRouter(): Router {
                 }
             });
         } else {
+            const user = await createUser({
+                username,
+                address,
+            });
+
+            res.json({
+                err: user.err,
+                message: user.message,
+                data: user.data
+            });
             res.status(404).json(
                 {
                     err: true,
