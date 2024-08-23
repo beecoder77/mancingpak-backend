@@ -276,9 +276,9 @@ shared(msg) actor class NFToken(
         Debug.print("Owner: " # Principal.toText(owner_));
         Debug.print("Caller: " # Principal.toText(msg.caller));
         //coment for testing
-        // if(msg.caller != owner_) {
-        //     return #Err(#Unauthorized);
-        // };
+        if(to != owner_) {
+            return #Err(#Unauthorized);
+        };
         let token: TokenInfo = {
             index = totalSupply_;
             var owner = to;
