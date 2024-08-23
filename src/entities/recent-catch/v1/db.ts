@@ -46,7 +46,8 @@ export type RecentCatchUpdate = Pick<RecentCatch, 'recentId' | 'addedToCollectio
 export async function getRecentCatchByUserAddress(address: string): Promise<RecentCatch[]> {
     return await RecentCatch.find({
         where: {
-            userAddress: address
+            userAddress: address,
+            addedToCollection: false
         }
     });
 }
