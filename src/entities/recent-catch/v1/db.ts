@@ -48,6 +48,9 @@ export async function getRecentCatchByUserAddress(address: string): Promise<Rece
         where: {
             userAddress: address,
             addedToCollection: false
+        },
+        order: {
+            id: 'DESC'
         }
     });
 }
