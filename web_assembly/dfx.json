@@ -6,6 +6,10 @@
             "custom": {
                 "experimental": true
             }
-        }
+        },
+        "token_ERC721": {
+            "main": "../src/lib/main.mo",
+            "type": "motoko"
+          },
     }
 }

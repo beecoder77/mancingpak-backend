@@ -11,6 +11,10 @@
         "nft": {
             "main": "src/lib/main.mo",
             "type": "motoko"
+        },
+        "sale": {
+            "main": "src/lib/sale.mo",
+            "type": "motoko"
         }
     }
 }
