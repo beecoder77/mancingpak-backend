@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, In } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 @Entity()
@@ -31,6 +31,9 @@ export class RecentCatch extends BaseEntity {
     userAddress: string;
 
     @Column()
+    addedToCollection: boolean;
+
+    @Column()
     createdAt: Date = new Date();
 
     @Column()
@@ -38,11 +41,20 @@ export class RecentCatch extends BaseEntity {
 }
 
 export type PostRecentCatch = Pick<RecentCatch, 'recentId' | 'fishId' | 'title' | 'imgUrl' | 'height' | 'rarity' | 'price' | 'userAddress' | 'createdAt' | 'updatedAt'> & { ids: RecentCatch['id'] };
+export type RecentCatchUpdate = Pick<RecentCatch, 'recentId' | 'addedToCollection' | 'updatedAt'>;
 
 export async function getRecentCatchByUserAddress(address: string): Promise<RecentCatch[]> {
     return await RecentCatch.find({
         where: {
             userAddress: address
+        }
+    });
+}
+
+async function getRecentCatchByRecentId(recentIds: any): Promise<RecentCatch[]> {
+    return await RecentCatch.find({
+        where: {
+            recentId: In(recentIds)
         }
     });
 }
@@ -58,6 +70,7 @@ export async function pushToRecentCatch(fish: any, addressId: any): Promise<any>
         fishData.rarity = fish.rarity;
         fishData.price = fish.price;
         fishData.userAddress = addressId;
+        fishData.addedToCollection = false;
         fishData.createdAt = new Date();
         fishData.updatedAt = new Date();
         await RecentCatch.save(fishData);
@@ -73,4 +86,23 @@ export async function pushToRecentCatch(fish: any, addressId: any): Promise<any>
         }
     }
     
+}
+
+export async function updateAddedToCollectionToTrue(recentIds:any): Promise<RecentCatch> {
+    const recentCatch = await getRecentCatchByRecentId(recentIds);
+    if (recentCatch === null) {
+        throw new Error(`recentCatch: ${recentIds} not found!`);
+    }
+    
+    await RecentCatch.update({ recentId: In(recentIds) }, {
+        addedToCollection: true,
+        updatedAt: new Date()
+    })
+
+    const updatedResult:any = await getRecentCatchByRecentId(recentIds);
+    if (updatedResult === null) {
+        throw new Error(`updateUser: failed for recentId ${recentIds}`);
+    }
+
+    return updatedResult;
 }

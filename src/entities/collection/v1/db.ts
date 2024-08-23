@@ -6,22 +6,13 @@ export class Collection extends BaseEntity {
     id: number;
 
     @Column()
-    title: string;
-
-    @Column()
-    imgUrl: string;
-
-    @Column()   
-    height: number;
-
-    @Column()
-    rarity: string;
-
-    @Column()   
-    price: number;
+    collectionName: string;
 
     @Column()
     userAddress: string;
+
+    @Column()
+    data: string;
 
     @Column()
     createdAt: Date = new Date();
@@ -30,7 +21,7 @@ export class Collection extends BaseEntity {
     updatedAt: Date = new Date();
 }
 
-export type PostCollection = Pick<Collection, 'title' | 'imgUrl' | 'height' | 'rarity' | 'price' | 'userAddress' | 'createdAt' | 'updatedAt'> & { fishId: Collection['id'] };
+export type PostCollection = Pick<Collection, 'collectionName' | 'userAddress' | 'data' | 'createdAt' | 'updatedAt'> & { collectionId: Collection['id'] };
 
 export async function getCollectionByUserAddress(address: string): Promise<Collection[]> {
     return await Collection.find({
@@ -40,23 +31,17 @@ export async function getCollectionByUserAddress(address: string): Promise<Colle
     });
 }
 
-export async function pushToRecentCatch(fish: any, addressId: any): Promise<any> {
+export async function pushToCollection(data: any, addressId: any): Promise<any> {
     try {
-        const fishData = new Collection;
-        fishData.id = fish.id;
-        fishData.title = fish.title;
-        fishData.imgUrl = fish.imgUrl;
-        fishData.height = fish.height;
-        fishData.rarity = fish.rarity;
-        fishData.price = fish.price;
-        fishData.userAddress = addressId;
-        fishData.createdAt = new Date();
-        fishData.updatedAt = new Date();
-        await Collection.save(fishData);
+        const collectionData = new Collection;
+        collectionData.collectionName = data.collectionName;
+        collectionData.userAddress = addressId;
+        collectionData.data = data.data;
+        await Collection.save(collectionData);
         return {
             err: false,
             message: 'Collection created successfully!',
-            data: fishData
+            data: collectionData
         }
     } catch (err) {
         return {
