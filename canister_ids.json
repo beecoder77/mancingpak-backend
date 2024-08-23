@@ -1,11 +1,8 @@
 {
   "nft": {
-    "ic": "h2iqr-qqaaa-aaaan-qmvoq-cai"
-  },
-  "sale": {
-    "ic": "htl3n-gyaaa-aaaan-qmvpa-cai"
+    "ic": "h2btb-laaaa-aaaap-qhtka-cai"
   },
   "sqlite_typeorm": {
-    "ic": "h3d56-kaaaa-aaaag-qkfqq-cai"
+    "ic": "h5avv-gyaaa-aaaap-qhtkq-cai"
   }
 }
