@@ -50,6 +50,7 @@ export function getRouter(): Router {
 
     router.get('/detailUser', async (req: Request, res) => {
         const id = req.headers.authorization ?  req.headers.authorization.replace('Bearer ', '') : '';
+        console.log(id);
         if (!id) {
             return res.status(500).json(
                 {
@@ -72,7 +73,7 @@ export function getRouter(): Router {
             res.status(404).json(
                 {
                     err: true,
-                    message: `user with id ${id} not found!`,
+                    message: `user with address ${id} not found!`,
                     data: {
                         id: id
                     }
@@ -148,10 +149,10 @@ export function getRouter(): Router {
 }
 
 async function updateHandler(
-    req: Request<any, any, { id: string; username?: string; accessToken?: string; address?: string }>,
+    req: Request<any, any, { id: string; username?: string; accessToken?: string; address?: string, level?: number, energy?: number }>,
     res: Response
 ): Promise<void> {
-    const { id, username, address, accessToken } = req.body;
+    const { id, username, address, accessToken, level, energy } = req.body;
 
     if (!id) {
         res.status(500).json(
@@ -165,7 +166,9 @@ async function updateHandler(
             id,
             username: username ? username : '',
             address: address ? address : '',
-            accessToken: accessToken ?  accessToken : ''
+            accessToken: accessToken ?  accessToken : '',
+            level: level ? level : 0,
+            energy: energy ? energy : 0,
         });
     
         res.json(user);
