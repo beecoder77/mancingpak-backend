@@ -146,8 +146,7 @@ export function getRouter(): Router {
     });
 
     router.post('/login', async (req: Request, res) => {
-        const address = req.headers.authorization ?  req.headers.authorization.replace('Bearer ', '') : '';
-        console.log(address);
+        const address = req.body.address;
         if (!address) {
             return res.status(500).json(
                 {
