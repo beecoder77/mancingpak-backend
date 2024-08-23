@@ -50,6 +50,7 @@ export function getRouter(): Router {
 
     router.get('/detailUser', async (req: Request, res) => {
         const id = req.headers.authorization ?  req.headers.authorization.replace('Bearer ', '') : '';
+        console.log(id);
         if (!id) {
             return res.status(500).json(
                 {
@@ -72,7 +73,7 @@ export function getRouter(): Router {
             res.status(404).json(
                 {
                     err: true,
-                    message: `user with id ${id} not found!`,
+                    message: `user with address ${id} not found!`,
                     data: {
                         id: id
                     }
